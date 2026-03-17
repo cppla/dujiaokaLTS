@@ -65,9 +65,3 @@ services:
       interval: 10s
       timeout: 3s
       retries: 10
-
-volumes:
-  dujiaoka_storage:
-  dujiaoka_uploads:
-  dujiaoka_db:
-  dujiaoka_redis:

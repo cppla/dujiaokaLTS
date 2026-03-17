@@ -9,17 +9,39 @@
 2、只做漏洞修复和安全加固，长期支持版本，适合钉子户。
 ```
 
-# V5 LTS版本如何运行：
+# V5 LTS版本如何运行（无需准备MySQL & Redis）：
 
 ```
+# 安装运行：
 1. 修改 .env 里的 APP_URL、DB_ROOT_PASSWORD、DB_PASSWORD、APP_PORT
 2. 首次安装：INSTALL=true ADMIN_HTTPS=false docker compose up -d --force-recreate
 3. 打开站点完成安装
 4. 安装完成后http访问：INSTALL=false ADMIN_HTTPS=false docker compose up -d
 5. 安装完成后https反向代理访问：INSTALL=false ADMIN_HTTPS=true docker compose restart
 
+# 注意事项：
+数据库保存目录为：./mysql
+Redis保存目录为：./redis
+应用数据保存目录为：./dujiaoka_storage
+上传文件保存目录为：./dujiaoka_uploads
 ```
 
+# V5 LTS版本如何运行（自己准备MySQL & Redis）：
+
+```
+# 安装运行：
+1. 修改 .env 里的 APP_URL、DB_ROOT_PASSWORD、DB_PASSWORD、APP_PORT
+2. 首次安装：INSTALL=true ADMIN_HTTPS=false docker compose -f docker-compose-no-db.yml up -d --force-recreate
+3. 打开站点完成安装
+4. 安装完成后http访问：INSTALL=false ADMIN_HTTPS=false docker compose -f docker-compose-no-db.yml restart
+5. 安装完成后https反向代理访问：INSTALL=false ADMIN_HTTPS=true docker compose -f docker-compose-no-db.yml restart
+
+# 注意事项：
+数据库保存目录为：你自己的数据库
+Redis保存目录为：你自己的Redis
+应用数据保存目录为：./dujiaoka_storage
+上传文件保存目录为：./dujiaoka_uploads
+```
 
 
 ---

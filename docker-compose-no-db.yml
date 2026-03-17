@@ -1,0 +1,26 @@
+services:
+  dujiaoka:
+    build:
+      context: .
+      dockerfile: Dockerfile
+      args:
+        TZ: ${TZ:-Asia/Shanghai}
+    image: cppla/dujiaokalts:latest
+    container_name: dujiaoka-lts
+    environment:
+      INSTALL: ${INSTALL:-false}
+      ADMIN_HTTPS: ${ADMIN_HTTPS:-}
+      TZ: ${TZ:-Asia/Shanghai}
+    volumes:
+      - ./.env:/var/www/html/.env
+      - ./dujiaoka_storage:/var/www/html/storage
+      - ./dujiaoka_uploads:/var/www/html/public/uploads
+    ports:
+      - "${APP_PORT:-8080}:80"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://127.0.0.1/ >/dev/null || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 30s

@@ -3,7 +3,7 @@
 <head>
     <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title>独角数卡安装程序</title>
+    <title>dujiaokaLTS 安装程序</title>
     <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1">
     <meta name="renderer" content="webkit">
 
@@ -685,14 +685,10 @@ TkSuQmCC" />
         </svg>
 
     </h1>
-    <h2>独角数卡 「{{ config('dujiaoka.dujiaoka_version') }}」</h2>
+    <h2>dujiaokaLTS 「{{ config('dujiaoka.dujiaoka_version') }}」</h2>
     <div>
 
-        <p>每个梦想的路上，一起前行....！
-            <a href="https://t.me/dujiaoka" id="qq-group-link" target="_blank">
-                👉🏻加入Telegram交流群
-            </a>
-        </p>
+        <p>每个梦想的路上，一起前行....！</p>
 
         <form method="post">
             <div id="error" style="display:none"></div>
@@ -701,7 +697,7 @@ TkSuQmCC" />
             <div class="form-group">
                 <div class="form-field">
                     <label>MySQL 数据库地址</label>
-                    <input name="db_host" value="127.0.0.1" required="">
+                    <input name="db_host" value="mysql" required="">
                 </div>
 
                 <div class="form-field">
@@ -720,14 +716,14 @@ TkSuQmCC" />
 
                 <div class="form-field">
                     <label>MySQL 密码</label>
-                    <input name="db_password"  required="">
+                    <input name="db_password" value="mysql_db_root_password" required="">
                 </div>
             </div>
 
             <div class="form-group">
                 <div class="form-field">
                     <label>Redis 连接地址</label>
-                    <input name="redis_host" value="127.0.0.1" required="">
+                    <input name="redis_host" value="redis" required="">
                 </div>
 
                 <div class="form-field">
@@ -745,7 +741,7 @@ TkSuQmCC" />
             <div class="form-group">
                 <div class="form-field">
                     <label>网站名称</label>
-                    <input type="title" value="独角数卡" name="title" required="">
+                    <input type="title" value="dujiaokaLTS" name="title" required="">
                 </div>
 
                 <div class="form-field">
