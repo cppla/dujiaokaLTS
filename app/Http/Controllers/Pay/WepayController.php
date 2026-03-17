@@ -57,7 +57,20 @@ class WepayController extends PayController
     public function notifyUrl()
     {
         $xml = file_get_contents('php://input');
-        $arr = json_decode(json_encode(simplexml_load_string($xml, 'SimpleXMLElement', LIBXML_NOCDATA)), true);
+        // Prevent XXE injection: disable external entity loading before parsing XML.
+        // libxml_disable_entity_loader() is deprecated in PHP 8.0+ (where XXE is off by default),
+        // so we suppress the deprecation notice while remaining safe on PHP 7.x.
+        if (\PHP_MAJOR_VERSION < 8) {
+            // @phpstan-ignore-next-line
+            libxml_disable_entity_loader(true);
+        }
+        libxml_use_internal_errors(true);
+        $sxe = simplexml_load_string($xml, 'SimpleXMLElement', LIBXML_NOCDATA);
+        libxml_use_internal_errors(false);
+        if ($sxe === false) {
+            return 'error';
+        }
+        $arr = json_decode(json_encode($sxe), true);
         $oid = $arr['out_trade_no'];
         $order = $this->orderService->detailOrderSN($oid);
         if (!$order) {

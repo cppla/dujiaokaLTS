@@ -10,9 +10,14 @@ class TrustProxies extends Middleware
     /**
      * The trusted proxies for this application.
      *
+     * Trusting all proxies ('*') is appropriate when the application runs behind a
+     * controlled reverse-proxy (e.g. Nginx on the same host/Docker network) and the
+     * proxy IP cannot be predicted at deploy time. If you know the proxy's IP, replace
+     * '*' with that specific address for stricter control.
+     *
      * @var array|string
      */
-    protected $proxies;
+    protected $proxies = '*';
 
     /**
      * The headers that should be used to detect proxies.

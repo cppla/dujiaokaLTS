@@ -81,9 +81,16 @@ class CoinbaseController extends PayController
     public function notifyUrl(Request $request)
     {
         $payload = file_get_contents( 'php://input' );
+        // Guard against missing webhook signature header to prevent fatal errors
+        if (empty($payload) || !isset($_SERVER['HTTP_X_CC_WEBHOOK_SIGNATURE'])) {
+            return 'fail';
+        }
         $sig    = $_SERVER['HTTP_X_CC_WEBHOOK_SIGNATURE'];
-		$data       = json_decode( $payload, true );
-		$event_data = $data['event']['data'];
+        $data       = json_decode( $payload, true );
+        if (!is_array($data) || !isset($data['event']['data']['metadata']['customer_id'])) {
+            return 'fail';
+        }
+        $event_data = $data['event']['data'];
 		$order = $this->orderService->detailOrderSN($event_data['metadata']['customer_id']);//
 		if (!$order) {
 			return 'fail';
@@ -98,7 +105,7 @@ class CoinbaseController extends PayController
 		$secret = $payGateway->merchant_pem;//共享密钥
 		$sig2 = hash_hmac( 'sha256', $payload, $secret );
         $result_str=array("confirmed","resolved");//返回的结果字符串数组
-		if (!empty( $payload ) && ($sig === $sig2))
+		if ($sig === $sig2)
 		{
 
             $return_currency = '';

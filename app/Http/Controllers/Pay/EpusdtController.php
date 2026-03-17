@@ -71,6 +71,12 @@ class EpusdtController extends PayController
     public function notifyUrl(Request $request)
     {
         $data = $request->all();
+        $requiredFields = ['order_id', 'amount', 'trade_id', 'signature'];
+        foreach ($requiredFields as $field) {
+            if (!isset($data[$field]) || $data[$field] === '') {
+                return 'fail';
+            }
+        }
         $order = $this->orderService->detailOrderSN($data['order_id']);
         if (!$order) {
             return 'fail';
