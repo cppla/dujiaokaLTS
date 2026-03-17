@@ -5,6 +5,7 @@ services:
       dockerfile: Dockerfile
       args:
         TZ: ${TZ:-Asia/Shanghai}
+    image: cppla/dujiaokaLTS:latest
     container_name: dujiaoka
     depends_on:
       db:
