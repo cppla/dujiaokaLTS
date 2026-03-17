@@ -6,7 +6,7 @@ services:
       args:
         TZ: ${TZ:-Asia/Shanghai}
     image: cppla/dujiaokalts:latest
-    container_name: dujiaoka
+    container_name: dujiaoka-lts
     depends_on:
       db:
         condition: service_healthy
