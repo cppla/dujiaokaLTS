@@ -44,6 +44,25 @@ Redis保存目录为：你自己的Redis
 ```
 
 
+# Nginx 反向代理
+```
+# 最重要的是location ^~ /中的相关配置。
+    location ^~ / {
+        proxy_pass http://127.0.0.1:56789;
+        proxy_set_header Host $host;
+        proxy_set_header X-Real-IP $remote_addr;
+        proxy_set_header X-Forwarded-For $proxy_add_x_forwarded_for;
+        proxy_set_header REMOTE-HOST $remote_addr;
+        proxy_set_header X-Forwarded-Proto  $scheme;
+
+        add_header X-Cache $upstream_cache_status;
+
+        proxy_set_header Accept-Encoding "";
+        sub_filter "http://" "https://";
+        sub_filter_once off;
+    }
+```
+
 ---
 # Refer EndOfLife:
 
