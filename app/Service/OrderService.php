@@ -228,7 +228,7 @@ class OrderService
 
     public function detailOrderUrl(Order $order): string
     {
-        return url('detail-order-sn', [
+        return route('detail-order-sn', [
             'orderSN' => $order->order_sn,
             'token' => $this->buildDetailToken($order),
         ]);
