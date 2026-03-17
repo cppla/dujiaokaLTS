@@ -2,33 +2,71 @@ services:
   dujiaoka:
     build:
       context: .
-      dockerfile: ./docker/Dockerfile
+      dockerfile: Dockerfile
+      args:
+        TZ: ${TZ:-Asia/Shanghai}
     container_name: dujiaoka
+    depends_on:
+      db:
+        condition: service_healthy
+      redis:
+        condition: service_healthy
     environment:
-      - INSTALL=true  #安装时候需要设置为true，安装完成后后续运行需要设置为false
+      INSTALL: ${INSTALL:-false}
+      ADMIN_HTTPS: ${ADMIN_HTTPS:-}
+      TZ: ${TZ:-Asia/Shanghai}
     volumes:
-      - ./test/uploads:/dujiaoka/public/uploads
-      - ./test/storage:/dujiaoka/storage
-      - ./test/env.conf:/dujiaoka/.env
+      - ./.env:/var/www/html/.env
+      - dujiaoka_storage:/var/www/html/storage
+      - dujiaoka_uploads:/var/www/html/public/uploads
     ports:
-      - 9999:80
-    restart: always
+      - "${APP_PORT:-8080}:80"
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "curl -fsS http://127.0.0.1/ >/dev/null || exit 1"]
+      interval: 30s
+      timeout: 5s
+      retries: 5
+      start_period: 30s
 
   db:
-    image: mariadb:focal
-    container_name: dujiaoka-data
-    restart: always
+    image: mariadb:10.6
+    container_name: dujiaoka-db
+    command:
+      - --character-set-server=utf8mb4
+      - --collation-server=utf8mb4_unicode_ci
+      - --max-connections=300
     environment:
-      - MYSQL_ROOT_PASSWORD=example
-      - MYSQL_DATABASE=dujiaoka
-      - MYSQL_USER=dujiaoka
-      - MYSQL_PASSWORD=example
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD:-change_me}
+      MYSQL_DATABASE: ${DB_DATABASE:-dujiaoka}
+      MYSQL_USER: ${DB_USERNAME:-dujiaoka}
+      MYSQL_PASSWORD: ${DB_PASSWORD:-change_me}
+      TZ: ${TZ:-Asia/Shanghai}
     volumes:
-      - ./mysql:/var/lib/mysql
+      - dujiaoka_db:/var/lib/mysql
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -p$$MYSQL_ROOT_PASSWORD --silent"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
 
   redis:
-    image: redis:alpine
+    image: redis:7-alpine
     container_name: dujiaoka-redis
-    restart: always
+    command: redis-server --appendonly yes
     volumes:
-      - ./redis:/data
+      - dujiaoka_redis:/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 10s
+      timeout: 3s
+      retries: 10
+
+volumes:
+  dujiaoka_storage:
+  dujiaoka_uploads:
+  dujiaoka_db:
+  dujiaoka_redis:
