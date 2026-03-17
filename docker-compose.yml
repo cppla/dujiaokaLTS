@@ -18,8 +18,8 @@ services:
       TZ: ${TZ:-Asia/Shanghai}
     volumes:
       - ./.env:/var/www/html/.env
-      - dujiaoka_storage:/var/www/html/storage
-      - dujiaoka_uploads:/var/www/html/public/uploads
+      - ./dujiaoka_storage:/var/www/html/storage
+      - ./dujiaoka_uploads:/var/www/html/public/uploads
     ports:
       - "${APP_PORT:-8080}:80"
     restart: unless-stopped
@@ -44,7 +44,7 @@ services:
       MYSQL_PASSWORD: ${DB_PASSWORD:-change_me}
       TZ: ${TZ:-Asia/Shanghai}
     volumes:
-      - dujiaoka_db:/var/lib/mysql
+      - ./mysql:/var/lib/mysql
     restart: unless-stopped
     healthcheck:
       test: ["CMD-SHELL", "mysqladmin ping -h 127.0.0.1 -uroot -p$$MYSQL_ROOT_PASSWORD --silent"]
@@ -58,7 +58,7 @@ services:
     container_name: dujiaoka-redis
     command: redis-server --appendonly yes
     volumes:
-      - dujiaoka_redis:/data
+      - ./redis:/data
     restart: unless-stopped
     healthcheck:
       test: ["CMD", "redis-cli", "ping"]

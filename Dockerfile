@@ -194,11 +194,15 @@ RUN set -eux; \
         'fi' \
         '' \
         'if [ -n "${ADMIN_HTTPS:-}" ] && [ -f .env ]; then' \
+        '    tmp_env="$(mktemp)"' \
         '    if grep -q "^ADMIN_HTTPS=" .env; then' \
-        '        sed -i "s/^ADMIN_HTTPS=.*/ADMIN_HTTPS=${ADMIN_HTTPS}/" .env' \
+        '        sed "s/^ADMIN_HTTPS=.*/ADMIN_HTTPS=${ADMIN_HTTPS}/" .env > "${tmp_env}"' \
         '    else' \
-        '        printf "\nADMIN_HTTPS=%s\n" "${ADMIN_HTTPS}" >> .env' \
+        '        cat .env > "${tmp_env}"' \
+        '        printf "\nADMIN_HTTPS=%s\n" "${ADMIN_HTTPS}" >> "${tmp_env}"' \
         '    fi' \
+        '    cat "${tmp_env}" > .env' \
+        '    rm -f "${tmp_env}"' \
         'fi' \
         '' \
         'if [ "${INSTALL:-true}" = "true" ]; then' \
