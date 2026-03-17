@@ -21,7 +21,7 @@ Route::group(['middleware' => ['dujiaoka.boot'],'namespace' => 'Home'], function
     // 结算页
     Route::get('bill/{orderSN}', 'OrderController@bill');
     // 通过订单号详情页
-    Route::get('detail-order-sn/{orderSN}', 'OrderController@detailOrderSN');
+    Route::get('detail-order-sn/{orderSN}', 'OrderController@detailOrderSN')->name('detail-order-sn');
     // 订单查询页
     Route::get('order-search', 'OrderController@orderSearch');
     // 检查订单状态
