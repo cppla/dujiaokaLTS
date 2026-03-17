@@ -54,7 +54,7 @@ RUN set -eux; \
     composer install --no-dev --prefer-dist --optimize-autoloader --no-interaction --no-scripts; \
     mv storage storage.dist; \
     mkdir -p storage public/uploads bootstrap/cache /run/nginx; \
-    sed -i "s/protected \\$proxies;/protected \\$proxies = '**';/" app/Http/Middleware/TrustProxies.php; \
+    sed -i "s/protected \$proxies;/protected \$proxies = '**';/" app/Http/Middleware/TrustProxies.php; \
     printf '%s\n' \
         'user nginx;' \
         'worker_processes auto;' \
