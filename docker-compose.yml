@@ -8,7 +8,7 @@ services:
     image: cppla/dujiaokalts:latest
     container_name: dujiaoka-lts
     depends_on:
-      db:
+      mysql:
         condition: service_healthy
       redis:
         condition: service_healthy
@@ -30,9 +30,9 @@ services:
       retries: 5
       start_period: 30s
 
-  db:
+  mysql:
     image: mariadb:10.6
-    container_name: dujiaoka-db
+    container_name: dujiaoka-mysql
     command:
       - --character-set-server=utf8mb4
       - --collation-server=utf8mb4_unicode_ci

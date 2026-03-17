@@ -205,6 +205,13 @@ RUN set -eux; \
         '    rm -f "${tmp_env}"' \
         'fi' \
         '' \
+        'if [ -f .env ] && grep -q "^ADMIN_ROUTE_PREFIX={admin_path}$" .env; then' \
+        '    tmp_env="$(mktemp)"' \
+        '    sed "s/^ADMIN_ROUTE_PREFIX={admin_path}$/ADMIN_ROUTE_PREFIX=admin/" .env > "${tmp_env}"' \
+        '    cat "${tmp_env}" > .env' \
+        '    rm -f "${tmp_env}"' \
+        'fi' \
+        '' \
         'if [ "${INSTALL:-true}" = "true" ]; then' \
         '    rm -f install.lock' \
         'else' \

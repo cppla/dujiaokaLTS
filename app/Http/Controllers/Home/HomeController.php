@@ -185,6 +185,7 @@ class HomeController extends BaseController
                 'redis_password',
                 'redis_port',
             ]);
+            $postData['admin_path'] = env('ADMIN_ROUTE_PREFIX', 'admin');
             // 临时写入key
             $postData['app_key'] = 'base64:' . base64_encode(
                     Encrypter::generateKey(config('app.cipher'))
