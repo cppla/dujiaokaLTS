@@ -219,7 +219,10 @@ RUN set -eux; \
         'fi' \
         '' \
         'chown -R www-data:www-data bootstrap/cache public/uploads storage' \
-        'chmod -R ug+rwx bootstrap/cache public/uploads storage' \
+        'chmod -R 0777 bootstrap/cache public/uploads storage' \
+        'if [ -f .env ]; then' \
+        '    chmod 0666 .env' \
+        'fi' \
         '' \
         'php artisan package:discover --ansi >/dev/null 2>&1 || true' \
         'php artisan config:clear >/dev/null 2>&1 || true' \
