@@ -226,7 +226,6 @@ RUN set -eux; \
         '' \
         'php artisan package:discover --ansi >/dev/null 2>&1 || true' \
         'php artisan config:clear >/dev/null 2>&1 || true' \
-        'php artisan cache:clear >/dev/null 2>&1 || true' \
         '' \
         'exec /usr/bin/supervisord -c /etc/supervisord.conf' > /usr/local/bin/docker-entrypoint.sh; \
     chmod +x /usr/local/bin/worker.sh /usr/local/bin/docker-entrypoint.sh; \
