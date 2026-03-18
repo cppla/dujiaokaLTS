@@ -45,7 +45,12 @@ Redis保存目录为：你自己的Redis
 
 
 # Nginx 反向代理
-```
+
+> **安全提示：**
+> 1. `sub_filter "http://" "https://"` 是一个应急兼容方案，可能破坏 JSON 响应体中的 URL（如支付回调地址、API 响应等）。强烈建议在 `.env` 中正确配置 `APP_URL=https://your-domain.com` 并启用 `ADMIN_HTTPS=true`，让应用本身生成正确的 HTTPS URL，而不依赖反向代理文本替换。
+> 2. 请将 `Content-Security-Policy` 设置为合适的值，避免使用 `default-src * 'unsafe-eval' 'unsafe-inline'`，该配置会完全禁用 CSP 保护。参考下方示例。
+
+```nginx
 # 最重要的是location ^~ /中的相关配置。
     location ^~ / {
         proxy_pass http://127.0.0.1:56789;
@@ -56,10 +61,17 @@ Redis保存目录为：你自己的Redis
         proxy_set_header X-Forwarded-Proto  $scheme;
 
         add_header X-Cache $upstream_cache_status;
+        add_header X-Frame-Options "SAMEORIGIN" always;
+        add_header X-Content-Type-Options "nosniff" always;
+        add_header X-XSS-Protection "1; mode=block" always;
+        add_header Referrer-Policy "no-referrer-when-downgrade" always;
+        # 建议收紧 CSP，以下为示例值，根据实际使用的第三方资源调整：
+        add_header Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; frame-src 'self' https://js.stripe.com; connect-src 'self'" always;
 
-        proxy_set_header Accept-Encoding "";
-        sub_filter "http://" "https://";
-        sub_filter_once off;
+        # 如果应用已正确配置 APP_URL 为 https，无需 sub_filter
+        # proxy_set_header Accept-Encoding "";
+        # sub_filter "http://" "https://";
+        # sub_filter_once off;
     }
 ```
 

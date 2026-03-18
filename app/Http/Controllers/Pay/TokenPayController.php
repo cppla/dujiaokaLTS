@@ -71,6 +71,12 @@ class TokenPayController extends PayController
     public function notifyUrl(Request $request)
     {
         $data = $request->all();
+        $requiredFields = ['OutOrderId', 'ActualAmount', 'Id', 'Signature'];
+        foreach ($requiredFields as $field) {
+            if (!isset($data[$field]) || $data[$field] === '') {
+                return 'fail';
+            }
+        }
         $order = $this->orderService->detailOrderSN($data['OutOrderId']);
         if (!$order) {
             return 'fail';
