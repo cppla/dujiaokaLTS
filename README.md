@@ -1,6 +1,6 @@
 ## dujiaoka V5 LTS
 
-### dujiaoka V5 LTS版本已经发布，欢迎使用和反馈问题。Power by AI
+### dujiaoka V5 LTS版本已经发布，欢迎使用和反馈问题。
 
 # V5 LTS版本说明：
 
@@ -46,12 +46,8 @@ Redis保存目录为：你自己的Redis
 
 # Nginx 反向代理
 
-> **安全提示：**
-> 1. `sub_filter "http://" "https://"` 是一个应急兼容方案，可能破坏 JSON 响应体中的 URL（如支付回调地址、API 响应等）。强烈建议在 `.env` 中正确配置 `APP_URL=https://your-domain.com` 并启用 `ADMIN_HTTPS=true`，让应用本身生成正确的 HTTPS URL，而不依赖反向代理文本替换。
-> 2. 请将 `Content-Security-Policy` 设置为合适的值，避免使用 `default-src * 'unsafe-eval' 'unsafe-inline'`，该配置会完全禁用 CSP 保护。参考下方示例。
-
 ```nginx
-# 最重要的是location ^~ /中的相关配置。
+# 为了安全，请务必正确配置APP_URL和ADMIN_HTTPS，避免使用sub_filter造成的潜在问题。例：APP_URL=https://my.cloudcpp.com, ADMIN_HTTPS=true
     location ^~ / {
         proxy_pass http://127.0.0.1:56789;
         proxy_set_header Host $host;
@@ -61,17 +57,10 @@ Redis保存目录为：你自己的Redis
         proxy_set_header X-Forwarded-Proto  $scheme;
 
         add_header X-Cache $upstream_cache_status;
-        add_header X-Frame-Options "SAMEORIGIN" always;
-        add_header X-Content-Type-Options "nosniff" always;
-        add_header X-XSS-Protection "1; mode=block" always;
-        add_header Referrer-Policy "no-referrer-when-downgrade" always;
-        # 建议收紧 CSP，以下为示例值，根据实际使用的第三方资源调整：
-        add_header Content-Security-Policy "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://js.stripe.com; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; frame-src 'self' https://js.stripe.com; connect-src 'self'" always;
 
-        # 如果应用已正确配置 APP_URL 为 https，无需 sub_filter
-        # proxy_set_header Accept-Encoding "";
-        # sub_filter "http://" "https://";
-        # sub_filter_once off;
+        proxy_set_header Accept-Encoding "";
+        sub_filter "http://" "https://";
+        sub_filter_once off;
     }
 ```
 
